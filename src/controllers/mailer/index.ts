@@ -6,7 +6,7 @@ import { mails as __templates } from "./../../templates"
 type SendEmailArgs = {
     args: {
         email: string
-        template: any
+        template: string
         data: any
     }
 }

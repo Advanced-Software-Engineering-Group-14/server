@@ -16,6 +16,7 @@ const ManagerSchema = new Schema({
     email: {
         type: SchemaTypes.String,
         required: true,
+        unique: true
     },
     phone: {
         type: SchemaTypes.String,

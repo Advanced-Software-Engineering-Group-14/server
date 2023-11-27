@@ -1,4 +1,4 @@
-"use strict";
+// "use strict";
 
 import lodash from "lodash"
 import { customAlphabet } from "nanoid"
