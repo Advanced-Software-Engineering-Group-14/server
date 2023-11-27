@@ -13,9 +13,10 @@ export default function verifyManager(req: Request, res: Response, next: NextFun
     const { user } = req;
     try {
         if (user.type === "ADMIN" || user.type === "SUDO") {
+            next();
+        } else {
             return next(createError(403, 'You are not authorized to perform this action'));
         }
-        next();
     } catch (error) {
         next(error);
     }

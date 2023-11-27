@@ -12,7 +12,7 @@ declare module 'express-serve-static-core' {
 export default function verifyDriver(req: Request, res: Response, next: NextFunction) {
     const { user } = req;
     try {
-        if (user.type === "DRIVER") {
+        if (user.type !== "DRIVER") {
             return next(createError(403, 'You are not authorized to perform this action'));
         }
         next();

@@ -12,7 +12,7 @@ declare module 'express-serve-static-core' {
 export default function verifySudo(req: Request, res: Response, next: NextFunction) {
     const { user } = req;
     try {
-        if (user.type === "SUDO") {
+        if (user.type !== "SUDO") {
             return next(createError(403, 'You are not authorized to perform this action'));
         }
         next();

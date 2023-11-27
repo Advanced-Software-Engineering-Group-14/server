@@ -12,7 +12,7 @@ declare module 'express-serve-static-core' {
 export default function verifyHomeowner(req: Request, res: Response, next: NextFunction) {
     const { user } = req;
     try {
-        if (user.type === "HOMEOWNER") {
+        if (user.type !== "HOMEOWNER") {
             return next(createError(403, 'You are not authorized to perform this action'));
         }
         next();
