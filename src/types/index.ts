@@ -84,8 +84,11 @@ export type Homeowner = {
     gender: "MALE" | "FEMALE"
     residence: string
     identification: {
-        type: "VOTER" | "COUNTRY" | "DRIVER"
-        number: string
+        idType: "VOTER" | "COUNTRY" | "DRIVER"
+        no: string
         imageUrl: string
     }
 }
+
+
+
