@@ -3,7 +3,8 @@
 import { __sendMail } from "./../../utils/mail"
 import { mails as __templates } from "./../../templates"
 
-type EmailTemplates = "ManagerCreated" | "ManagerVerificationCode" | "ManagerLoggedIn" | "ManagerAccountSuspended" | "ManagerAccountUnSuspended"
+type EmailTemplates = "ManagerCreated" | "ManagerVerificationCode" | "ManagerLoggedIn" | "ManagerAccountSuspended" | "ManagerAccountUnSuspended" | "DriverCreated" | "DriverVerificationCode" | "DriverLoggedIn" | "DriverAccountSuspended" | "DriverAccountUnSuspended" | "HomeownerCreated" | "HomeownerVerificationCode" | "HomeownerLoggedIn" | "HomeownerAccountSuspended" | "HomeownerAccountUnSuspended"
+
 type EmailData = {
     user?: any
     code?: string

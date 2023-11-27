@@ -3,6 +3,7 @@ import { __genCode } from "../helpers/string";
 import dayjs from "dayjs";
 import bcrypt from "bcrypt"
 import { __generateAuthToken } from "../helpers/token";
+import { NextFunction} from "express"
 
 const HomeownerSchema = new Schema({
     surname: {
@@ -94,7 +95,8 @@ const HomeownerSchema = new Schema({
     },
 }, { timestamps: true })
 
-HomeownerSchema.pre("save", async function (next) {
+HomeownerSchema.pre("save", async function (next: any) {
+    // let thisSchema: any = this
     if (!this.isModified("password")) return next();
     try {
         let salt = await bcrypt.genSalt(10);
