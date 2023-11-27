@@ -1,10 +1,11 @@
 import { Router } from 'express';
-import { VerifyAccess } from '../middlewares';
-import { createManager } from '../controllers/manager.controller';
+import { VerifyAccess, VerifyManager } from '../middlewares';
+import { createManager, updateManagerPassword } from '../controllers/manager.controller';
 
 const router = Router();
 
 router.post("/", createManager)
+router.post("/change-password", VerifyAccess, VerifyManager, updateManagerPassword)
 
 
 export default router;

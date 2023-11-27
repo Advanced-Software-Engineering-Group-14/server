@@ -4,6 +4,7 @@ import { loginManager, resetManagerPassword, sendManagerCode, verifyManagerCode 
 
 const router = Router();
 
+// /auth - manager
 router.post("/manager/login", loginManager)
 router.post("/manager/reset-password", resetManagerPassword)
 router.post("/manager/send-code", sendManagerCode)
