@@ -18,5 +18,9 @@ export default {
     ManagerAccountSuspended: {
         subject: lodash.template("Account Suspension"),
         message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been suspended. Kindly contact your managers to follow up. Until your account is unsuspended, you will not be able to use your account.")
-    }
+    },
+    ManagerAccountUnSuspended: {
+        subject: lodash.template("Account Unsuspended"),
+        message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been unsuspended. You can now log into your account.")
+    },
 }

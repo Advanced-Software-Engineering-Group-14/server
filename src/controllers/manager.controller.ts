@@ -123,6 +123,10 @@ export async function suspendManager(req: Request<{ id: string }>, res: Response
             return next(createError(404, "Account not found"))
         }
 
+        if (_user.id === id) {
+            return next(createError(401, "You can not suspend yourself"))
+        }
+
         if (existingUser?.role === "SUDO") {
             return next(createError(401, "SUDO account can not be suspended"))
         }
@@ -150,6 +154,56 @@ export async function suspendManager(req: Request<{ id: string }>, res: Response
         res.status(200).json({
             success: true,
             message: 'Account blocked!',
+            data: updatedUser,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+
+}
+export async function unsuspendManager(req: Request<{ id: string }>, res: Response, next: NextFunction) {
+    const { id } = req.params
+    const { user: _user } = req
+
+    try {
+        const existingUser = await ManagerModel.findById(id)
+
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        if (_user.id === id) {
+            return next(createError(401, "You can not suspend yourself"))
+        }
+
+        if (existingUser?.role === "SUDO") {
+            return next(createError(401, "SUDO account can not be suspended"))
+        }
+
+        if (!existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has already been unsuspended"))
+        }
+        
+        const updatedUser = await ManagerModel.findByIdAndUpdate(existingUser?._id, {
+            meta: {
+            isSuspended: false
+            }
+        }, { new: true })
+
+        await sendMail({
+            args: {
+                email: existingUser?.email,
+                template: "ManagerAccountUnSuspended",
+                data: {
+                    user: updatedUser,
+                }
+            }
+        })
+        
+        res.status(200).json({
+            success: true,
+            message: 'Account unblocked!',
             data: updatedUser,
         });
 
