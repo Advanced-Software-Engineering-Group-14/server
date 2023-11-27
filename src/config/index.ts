@@ -25,6 +25,9 @@ const config = {
             secret: process.env.JWT_ACCESS_SECRET || "wastifyserveraccesssecret",
             expiry:  ms(process.env.JWT_ACCESS_EXPIRATION ? process.env.JWT_ACCESS_EXPIRATION: "2d")
         },
+        code: {
+            expiry: ms(process.env.CODE_EXPIRY ? process.env.CODE_EXPIRY : "10m")
+        },
         refresh: {
             secret: process.env.JWT_REFRESH_SECRET,
             expiry: process.env.JWT_REFRESH_EXPIRATION

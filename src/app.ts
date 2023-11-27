@@ -7,7 +7,7 @@ import { IMessageResponse } from './interfaces';
 import { ErrorHandler, NotFound } from './middlewares';
 
 import { __generateAuthToken } from './helpers/token';
-import { ManagerRoute } from './routes';
+import { ManagerRoute, AuthRoute } from './routes';
 
 require('dotenv').config();
 
@@ -30,6 +30,7 @@ app.get<{}, IMessageResponse>('/api', (req, res) => {
 
 
 app.use("/api/manager", ManagerRoute)
+app.use("/api/auth", AuthRoute)
 
 
 

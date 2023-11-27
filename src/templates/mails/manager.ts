@@ -8,7 +8,11 @@ export default {
         message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour manager account has been created with\nEmail: ${user.email} \nPassword: ${password}\nRole: ${user.role}\n\nLog onto https://.com to explore")
     },
     ManagerVerificationCode: {
-        subject: lodash.template("Staff Account Verification"),
+        subject: lodash.template("Manager Account Verification"),
         message: lodash.template("Dear ${user.othernames} ${user.surname},,\n\nYour verification code is ${code}")
+    },
+    ManagerLoggedIn: {
+        subject: lodash.template("Account Login"),
+        message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nWe just detected a recent login into your account. If this was you, you can safely ignore this email, otherwise you should change your password immediately.")
     }
 }

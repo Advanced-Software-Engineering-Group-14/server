@@ -1,5 +1,3 @@
-"use strict";
-
 import _ from "lodash"
 import { __genPassword } from "../helpers/string";
 import { ManagerModel } from "../models"

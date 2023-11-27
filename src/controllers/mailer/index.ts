@@ -3,11 +3,18 @@
 import { __sendMail } from "./../../utils/mail"
 import { mails as __templates } from "./../../templates"
 
+type EmailTemplates = "ManagerCreated" | "ManagerVerificationCode" | "ManagerLoggedIn"
+type EmailData = {
+    user?: any
+    code?: string
+    password?: string
+}
+
 type SendEmailArgs = {
     args: {
         email: string
-        template: string
-        data: any
+        template: EmailTemplates
+        data: EmailData
     }
 }
 
