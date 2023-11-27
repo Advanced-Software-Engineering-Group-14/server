@@ -24,7 +24,7 @@ export type MongoResponse = {
     __v?: number
 }
 
-export type UserRoles = "SUDO" | "MANAGER" | "DRIVER" | "HOMEOWNER"
+export type UserRoles = "SUDO" | "ADMIN" | "DRIVER" | "HOMEOWNER"
 
 export type Manager = {
     surname: string

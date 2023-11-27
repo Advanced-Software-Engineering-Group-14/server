@@ -5,12 +5,28 @@ import ms from "ms"
 import jwt from "jsonwebtoken"
 import { UserRoles } from "../types";
 
-interface TokenPayload {
+export interface TokenPayload {
     id: string
     email: string
     type: UserRoles
     isSuspended?: boolean
     isApproved?: boolean
+}
+
+export async function __validateAuthToken(token: string): Promise<TokenPayload> {
+	return new Promise(
+		function (resolve, reject) {
+			jwt.verify(
+				token,
+				Buffer.from(config.auth.access.secret, "base64"),
+				{ ignoreNotBefore: true },
+				function (err, payload) {
+					if (err) reject(new Error("AuthorizationExpired"));
+					resolve(payload as TokenPayload);
+				}
+			);
+		}
+	);
 }
 
 export async function __generateAuthToken(payload: TokenPayload): Promise<string| any> {
