@@ -13,7 +13,8 @@ type LoginUserInput = {
     password: string
 }
 
-type ChangePasswordInput = {
+export type ChangePasswordInput = {
+    email: string
     oldPassword: string
     newPassword: string
 }
@@ -85,6 +86,7 @@ export async function loginManager(req: Request<{}, {}, LoginUserInput>, res: Re
 
 
 
+        next()
 
     } catch (error) {
         next(error)
