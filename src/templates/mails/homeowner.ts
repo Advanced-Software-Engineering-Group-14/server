@@ -23,4 +23,13 @@ export default {
         subject: lodash.template("Account Unsuspended"),
         message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been unsuspended. You can now log into your account.")
     },
+    HomeownerApproved: {
+        subject: lodash.template("Account Approved"),
+        message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been approved. All features in the application are now available to you.")
+    },
+    HomeownerRejected: {
+        subject: lodash.template("Account Rejected"),
+        message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been unfortunately rejected. Reasons for this could be that the Wastify Team suspects that you may be a fraudulent account or spam account. \n\nIf this is a mistake, reach out to the managers.")
+    },
+
 }
