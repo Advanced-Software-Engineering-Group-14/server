@@ -1,8 +1,10 @@
 import app from './app';
+import config from './config';
+import DBCONNECT from './database';
 
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  /* eslint-disable no-console */
-  console.log(`Listening: http://localhost:${port}`);
-  /* eslint-enable no-console */
+
+DBCONNECT(() => {
+  app.listen(config.app.port, () => {
+    console.log(`🔥 Server is running on port ${config.app.port}`);
+  });
 });
