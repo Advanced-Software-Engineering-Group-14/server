@@ -8,5 +8,5 @@
       "src/**/*.spec.ts",
       "src/**/*.test.ts"
     ],
-    "exec": "npx tsx ./src/index.ts"
+    "exec": "tsx ./src/index.ts"
   }
