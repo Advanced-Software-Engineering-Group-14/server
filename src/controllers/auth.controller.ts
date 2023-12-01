@@ -532,7 +532,7 @@ export async function verifyManagerCode(req: Request<{}, {}, VerifyCodeInput>, r
                 $set: {
                   verification: {
                     code: __code,
-                    expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
+                    expiresAt: dayjs().add(10, "m").toDate()
                   }
                 }
             })

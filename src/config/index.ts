@@ -26,7 +26,7 @@ const config = {
             expiry:  ms(process.env.JWT_ACCESS_EXPIRATION ? process.env.JWT_ACCESS_EXPIRATION: "2d")
         },
         code: {
-            expiry: ms(process.env.CODE_EXPIRY ? process.env.CODE_EXPIRY : "10m")
+            expiry: ms("10m")
         },
         refresh: {
             secret: process.env.JWT_REFRESH_SECRET,
