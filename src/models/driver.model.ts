@@ -26,8 +26,9 @@ const DriverSchema = new Schema({
         required: true,
     },
     rating: {
-        type: SchemaTypes.String,
+        type: SchemaTypes.Number,
         required: true,
+        default: 0
     },
     gender: {
         type: SchemaTypes.String,

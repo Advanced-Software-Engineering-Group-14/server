@@ -42,6 +42,17 @@ export async function createDriver(req: Request<{}, {}, CreateDriverInput>, res:
 
         await newUser.save()
 
+        await sendMail({
+            args: {
+                email,
+                template: "DriverCreated",
+                data: {
+                    password,
+                    user: newUser,
+                }
+            }
+        })
+
         res.status(201).json({
             success: true,
             data: newUser,

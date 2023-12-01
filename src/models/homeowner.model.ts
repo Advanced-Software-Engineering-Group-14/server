@@ -27,8 +27,9 @@ const HomeownerSchema = new Schema({
         required: true,
     },
     rating: {
-        type: SchemaTypes.String,
+        type: SchemaTypes.Number,
         required: true,
+        default: 0
     },
     gender: {
         type: SchemaTypes.String,
@@ -88,6 +89,16 @@ const HomeownerSchema = new Schema({
             required: true
         },
         isSuspended: {
+            type: SchemaTypes.Boolean,
+            default: false,
+            required: true
+        },
+        isApproved: {
+            type: SchemaTypes.Boolean,
+            default: false,
+            required: true
+        },
+        isVerified: {
             type: SchemaTypes.Boolean,
             default: false,
             required: true

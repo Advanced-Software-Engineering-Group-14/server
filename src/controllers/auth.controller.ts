@@ -86,7 +86,7 @@ export async function loginManager(req: Request<{}, {}, LoginUserInput>, res: Re
 
 
 
-        next()
+        // next()
 
     } catch (error) {
         next(error)
@@ -142,7 +142,7 @@ export async function loginDriver(req: Request<{}, {}, LoginUserInput>, res: Res
 
 
 
-        next()
+        // next()
 
     } catch (error) {
         next(error)
@@ -197,7 +197,7 @@ export async function loginHomeowner(req: Request<{}, {}, LoginUserInput>, res: 
             data: updatedUser,
         });
 
-        next()
+        // next()
 
     } catch (error) {
         next(error)
