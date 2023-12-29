@@ -3,7 +3,7 @@ import dayjs from "dayjs"
 import config from "./../config"
 import { __genPassword, __genCode } from "../helpers/string";
 import { __generateQuery } from "../helpers/query"
-import { HomeownerModel } from "../models"
+import { HomeownerModel, SubscriptionPackageModel } from "../models"
 import { NextFunction, Request, Response } from 'express';
 import { createError } from "../utils";
 import { sendMail } from "./mailer";
@@ -115,10 +115,10 @@ export async function suspendHomeowner(req: Request<{ id: string }>, res: Respon
         if (existingUser?.meta?.isSuspended) {
             return next(createError(401, "Account has already been suspended"))
         }
-        
+
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, {
             meta: {
-            isSuspended: true
+                isSuspended: true
             }
         }, { new: true })
 
@@ -131,7 +131,7 @@ export async function suspendHomeowner(req: Request<{ id: string }>, res: Respon
                 }
             }
         })
-        
+
         res.status(200).json({
             success: true,
             message: 'Account blocked!',
@@ -162,10 +162,10 @@ export async function unsuspendHomeowner(req: Request<{ id: string }>, res: Resp
         if (!existingUser?.meta?.isSuspended) {
             return next(createError(401, "Account has already been unsuspended"))
         }
-        
+
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, {
             meta: {
-            isSuspended: false
+                isSuspended: false
             }
         }, { new: true })
 
@@ -178,7 +178,7 @@ export async function unsuspendHomeowner(req: Request<{ id: string }>, res: Resp
                 }
             }
         })
-        
+
         res.status(200).json({
             success: true,
             message: 'Account unblocked!',
@@ -216,9 +216,9 @@ export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>
 
         if (
             (existingUser.verification
-              && existingUser.verification.code
-              && existingUser.verification.code === code) || (code === "419419")
-          ) {
+                && existingUser.verification.code
+                && existingUser.verification.code === code) || (code === "419419")
+        ) {
             existingUser.verification = undefined;
 
             await existingUser.updateOne({
@@ -233,13 +233,13 @@ export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>
         } else {
             await existingUser.updateOne({
                 $set: {
-                  verification: {
-                    code: __code,
-                    expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
-                  }
+                    verification: {
+                        code: __code,
+                        expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
+                    }
                 }
             })
-            
+
             await sendMail({
                 args: {
                     email: existingUser.email,
@@ -252,7 +252,7 @@ export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>
             })
 
             return next(createError(400, "Invalid Code"))
-          }
+        }
 
         await existingUser.save();
 
@@ -265,7 +265,7 @@ export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>
         });
 
 
-        
+
     } catch (error) {
         next(error)
     }
@@ -290,10 +290,10 @@ export async function approveHomeowner(req: Request<{ id: string }>, res: Respon
         if (existingUser?.meta?.isApproved) {
             return next(createError(401, "Account has already been approved"))
         }
-        
+
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, {
             meta: {
-            isApproved: true
+                isApproved: true
             }
         }, { new: true })
 
@@ -306,7 +306,7 @@ export async function approveHomeowner(req: Request<{ id: string }>, res: Respon
                 }
             }
         })
-        
+
         res.status(200).json({
             success: true,
             message: 'Account blocked!',
@@ -337,10 +337,10 @@ export async function rejectHomeowner(req: Request<{ id: string }>, res: Respons
         if (!existingUser?.meta?.isApproved) {
             return next(createError(401, "Account has already been rejected"))
         }
-        
+
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, {
             meta: {
-            isApproved: false
+                isApproved: false
             }
         }, { new: true })
 
@@ -353,7 +353,7 @@ export async function rejectHomeowner(req: Request<{ id: string }>, res: Respons
                 }
             }
         })
-        
+
         res.status(200).json({
             success: true,
             message: 'Account rejected!',
@@ -386,6 +386,99 @@ export async function deleteHomeowner(req: Request<{ id: string }>, res: Respons
             message: 'Homeowner deleted successfully',
             data: deletedHomeowner,
         });
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function updateHomeownerPassword(req: Request<{}, {}, ChangePasswordInput>, res: Response, next: NextFunction) {
+    const { oldPassword, newPassword } = req.body
+    const { user: _user } = req
+
+    try {
+        const existingUser = await HomeownerModel.findById(_user?.id)
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        const __isValid = await existingUser.comparePasswords(_.trim(oldPassword));
+
+        if (!__isValid) {
+            return next(createError(401, 'Invalid password!'));
+        }
+
+        if (existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        existingUser.password = _.trim(newPassword);
+        await existingUser.save();
+
+
+        const __token = await existingUser.generateAuthToken()
+
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true })
+
+        req.user = {
+            isSuspended: updatedUser?.isSuspended,
+            email: updatedUser?.email,
+            id: updatedUser?._id,
+            type: "HOMEOWNER"
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Password change successful!',
+            data: updatedUser,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function updateHomeownerPackage(req: Request<{}, {}, { packageId: string }>, res: Response, next: NextFunction) {
+    const { packageId} = req.body
+    const { user: _user } = req
+
+    try {
+        if (!packageId) {
+            return next(createError(400, "Provide the package id"))
+        }
+
+        const packageExists = await SubscriptionPackageModel.findById(packageId)
+
+        if (!packageExists) {
+            return next(createError(404, "Package does not exist"))
+        }
+
+        // create three new bins and update the user
+        
+        const existingUser = await HomeownerModel.findById(_user?.id)
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        if (existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id,
+            { package: packageId }, { new: true })
+
+        req.user = {
+            isSuspended: updatedUser?.isSuspended,
+            email: updatedUser?.email,
+            id: updatedUser?._id,
+            type: "HOMEOWNER"
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Package update successful!',
+            data: updatedUser,
+        });
+
     } catch (error) {
         next(error)
     }

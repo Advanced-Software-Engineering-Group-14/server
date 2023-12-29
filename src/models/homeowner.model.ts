@@ -104,6 +104,16 @@ const HomeownerSchema = new Schema({
             required: true
         }
     },
+    bin: [{
+        type: SchemaTypes.ObjectId,
+        ref: "Bin",
+        default: null
+    }],
+    package: {
+        type: SchemaTypes.ObjectId,
+        ref: "SubscriptionPackage",
+        default: null
+    }
 }, { timestamps: true })
 
 HomeownerSchema.pre("save", async function (next: any) {

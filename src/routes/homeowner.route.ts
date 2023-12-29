@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { VerifyAccess, VerifyManager, VerifySudo } from '../middlewares';
-import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail } from '../controllers/homeowner.controller';
+import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail, updateHomeownerPassword } from '../controllers/homeowner.controller';
 
 const router = Router();
 
@@ -8,6 +8,7 @@ const router = Router();
 
 router.post("/", createHomeowner)
 router.post("/verify", VerifyAccess, verifyHomeownerEmail)
+router.post("/change-password", VerifyAccess, updateHomeownerPassword)
 
 router.get("/", VerifyAccess, VerifyManager, getAllHomeowners)
 router.get("/:id", VerifyAccess, getHomeownerById)
