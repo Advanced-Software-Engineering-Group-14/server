@@ -89,21 +89,24 @@ export type Homeowner = {
         no: string
         imageUrl: string
     }
-    bin: Bin[]
-    package: SubscriptionPackage
+    bins: Bin[]
+    package: BinPackage
 }
 
 
-export type SubscriptionPackage = {
+export type BinPackage = {
     name: string
     price: number
     binNum: number
     isCustom: boolean
 }
 
-export type Payments = {
-    paymentType: "subscription" | "bin"
-    subscription?: SubscriptionPackage
+
+
+export type Payment = {
+    paymentType: "pickup" | "bin"
+    pickup?: Pickup
+    binPackage?: BinPackage
     paymentMethod: "card" | "mobile_money" | "bank"
     response: "success" | "failure"
     totalAmount: number
@@ -120,6 +123,7 @@ export type Bin = {
 export type Pickup = {
     date: Date
     status: "pending" | "assigned" | "ongoing" | "completed" | "cancelled"
+    bins: Bin[]
     homeowner: Homeowner
     driver: Driver
 }

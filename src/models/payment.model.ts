@@ -3,7 +3,7 @@ import { Schema, model, SchemaTypes } from "mongoose";
 const PaymentSchema = new Schema({
     paymentType: {
         type: SchemaTypes.String,
-        enum: ["subscription", "bin"],
+        enum: ["pickup", "bin"],
         required: true
     },
     paymentMethod: {
@@ -19,6 +19,14 @@ const PaymentSchema = new Schema({
     homeowner: {
         type: SchemaTypes.ObjectId,
         ref: "Homeowner",
+    },
+    pickup: {
+        type: SchemaTypes.ObjectId,
+        ref: "Pickup",
+    },
+    binPackage: {
+        type: SchemaTypes.ObjectId,
+        ref: "BinPackage",
     },
     refNumber: {
         type: SchemaTypes.String,

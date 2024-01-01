@@ -16,6 +16,11 @@ const PickupSchema = new Schema({
         ref: "Driver",
         required: true
     },
+    bins: [{
+        type: SchemaTypes.ObjectId,
+        ref: "Bin",
+        required: true
+    }],
     date: {
         type: SchemaTypes.Date,
         required: true,

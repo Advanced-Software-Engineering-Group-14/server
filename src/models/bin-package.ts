@@ -1,6 +1,6 @@
 import { Schema, model, SchemaTypes } from "mongoose";
 
-const SubscriptionPackageSchema = new Schema({
+const BinPackageSchema = new Schema({
     name: {
         type: SchemaTypes.String,
         required: true
@@ -21,4 +21,4 @@ const SubscriptionPackageSchema = new Schema({
 }, { timestamps: true })
 
 
-export const SubscriptionPackageModel = model<any>("SubscriptionPackage", SubscriptionPackageSchema);
+export const BinPackageModel = model<any>("BinPackage", BinPackageSchema);

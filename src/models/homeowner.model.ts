@@ -104,10 +104,10 @@ const HomeownerSchema = new Schema({
             required: true
         }
     },
-    bin: [{
+    bins: [{
         type: SchemaTypes.ObjectId,
         ref: "Bin",
-        default: null
+        default: []
     }],
     package: {
         type: SchemaTypes.ObjectId,
