@@ -111,7 +111,7 @@ const HomeownerSchema = new Schema({
     }],
     package: {
         type: SchemaTypes.ObjectId,
-        ref: "SubscriptionPackage",
+        ref: "BinPackage",
         default: null
     }
 }, { timestamps: true })

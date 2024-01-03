@@ -1,4 +1,5 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { BinPackageRes } from "../types";
 
 const BinPackageSchema = new Schema({
     name: {
@@ -14,6 +15,11 @@ const BinPackageSchema = new Schema({
         required: true,
         default: false
     },
+    size: {
+        type: SchemaTypes.String,
+        enum: ["sm", "md", "lg"],
+        required: true
+    },
     binNum: {
         type: SchemaTypes.Number,
         required: true
@@ -21,4 +27,4 @@ const BinPackageSchema = new Schema({
 }, { timestamps: true })
 
 
-export const BinPackageModel = model<any>("BinPackage", BinPackageSchema);
+export const BinPackageModel = model<BinPackageRes>("BinPackage", BinPackageSchema);

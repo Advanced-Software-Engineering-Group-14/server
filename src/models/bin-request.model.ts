@@ -1,10 +1,14 @@
 import { Schema, model, SchemaTypes } from "mongoose";
-import { PickupRes } from "../types";
+import { BinRequestRes } from "../types";
 
-const PickupSchema = new Schema({
+const BinRequestSchema = new Schema({
     status: {
         type: SchemaTypes.String,
-        enum: ["pending", "assigned" , "ongoing" , "cancelled", "completed"],
+        enum: ["pending", "processing", "accepted", "delivered", "cancelled"],
+        required: true
+    },
+    binNum: {
+        type: SchemaTypes.Number,
         required: true
     },
     homeowner: {
@@ -17,11 +21,11 @@ const PickupSchema = new Schema({
         ref: "Driver",
         required: true
     },
-    bins: [{
+    payment: {
         type: SchemaTypes.ObjectId,
-        ref: "Bin",
+        ref: "Payment",
         required: true
-    }],
+    },
     date: {
         type: SchemaTypes.Date,
         required: true,
@@ -29,4 +33,4 @@ const PickupSchema = new Schema({
 }, { timestamps: true })
 
 
-export const PickupModel = model<PickupRes>("Pickup", PickupSchema);
+export const BinRequestModel = model<BinRequestRes>("BinRequest", BinRequestSchema);

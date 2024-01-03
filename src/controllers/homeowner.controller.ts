@@ -3,7 +3,7 @@ import dayjs from "dayjs"
 import config from "./../config"
 import { __genPassword, __genCode } from "../helpers/string";
 import { __generateQuery } from "../helpers/query"
-import { HomeownerModel, SubscriptionPackageModel } from "../models"
+import { HomeownerModel, BinPackageModel, BinModel } from "../models"
 import { NextFunction, Request, Response } from 'express';
 import { createError } from "../utils";
 import { sendMail } from "./mailer";
@@ -61,7 +61,7 @@ export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>
 
 export async function getAllHomeowners(req: Request, res: Response, next: NextFunction) {
     try {
-        const homeowners = await HomeownerModel.find()
+        const homeowners = await HomeownerModel.find().populate("package bins")
 
         res.status(200).json({
             success: true,
@@ -80,7 +80,7 @@ export async function getHomeownerById(req: Request<{ id: string }>, res: Respon
             return next(createError(400, 'Provide user id'));
         }
 
-        const driver = await HomeownerModel.findById(id)
+        const driver = await HomeownerModel.findById(id).populate("package bins")
 
         if (!driver) {
             return next(createError(404, "Account not found"))
@@ -120,7 +120,7 @@ export async function suspendHomeowner(req: Request<{ id: string }>, res: Respon
             meta: {
                 isSuspended: true
             }
-        }, { new: true })
+        }, { new: true }).populate("package bins")
 
         await sendMail({
             args: {
@@ -167,7 +167,7 @@ export async function unsuspendHomeowner(req: Request<{ id: string }>, res: Resp
             meta: {
                 isSuspended: false
             }
-        }, { new: true })
+        }, { new: true }).populate("package bins")
 
         await sendMail({
             args: {
@@ -256,7 +256,7 @@ export async function verifyHomeownerEmail(req: Request<{}, {}, VerifyCodeInput>
 
         await existingUser.save();
 
-        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true })
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true }).populate("package bins")
 
         res.status(200).json({
             success: true,
@@ -295,7 +295,7 @@ export async function approveHomeowner(req: Request<{ id: string }>, res: Respon
             meta: {
                 isApproved: true
             }
-        }, { new: true })
+        }, { new: true }).populate("package bins")
 
         await sendMail({
             args: {
@@ -342,7 +342,7 @@ export async function rejectHomeowner(req: Request<{ id: string }>, res: Respons
             meta: {
                 isApproved: false
             }
-        }, { new: true })
+        }, { new: true }).populate("package bins")
 
         await sendMail({
             args: {
@@ -379,7 +379,7 @@ export async function deleteHomeowner(req: Request<{ id: string }>, res: Respons
             return next(createError(404, "Account not found"))
         }
 
-        const deletedHomeowner = await HomeownerModel.findByIdAndDelete(id)
+        const deletedHomeowner = await HomeownerModel.findByIdAndDelete(id).populate("package bins")
 
         res.status(200).json({
             success: true,
@@ -417,7 +417,7 @@ export async function updateHomeownerPassword(req: Request<{}, {}, ChangePasswor
 
         const __token = await existingUser.generateAuthToken()
 
-        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true })
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true }).populate("package bins")
 
         req.user = {
             isSuspended: updatedUser?.isSuspended,
@@ -437,7 +437,8 @@ export async function updateHomeownerPassword(req: Request<{}, {}, ChangePasswor
     }
 }
 
-export async function updateHomeownerPackage(req: Request<{}, {}, { packageId: string }>, res: Response, next: NextFunction) {
+
+export async function chooseBinPackage(req: Request<{}, {}, { packageId: string }>, res: Response, next: NextFunction) {
     const { packageId} = req.body
     const { user: _user } = req
 
@@ -446,13 +447,11 @@ export async function updateHomeownerPackage(req: Request<{}, {}, { packageId: s
             return next(createError(400, "Provide the package id"))
         }
 
-        const packageExists = await SubscriptionPackageModel.findById(packageId)
+        const packageExists = await BinPackageModel.findById(packageId)
 
         if (!packageExists) {
             return next(createError(404, "Package does not exist"))
         }
-
-        // create three new bins and update the user
         
         const existingUser = await HomeownerModel.findById(_user?.id)
         if (!existingUser) {
@@ -463,8 +462,17 @@ export async function updateHomeownerPackage(req: Request<{}, {}, { packageId: s
             return next(createError(401, "Account has been suspended"))
         }
 
+        const validBins = await BinModel.find({
+            homeowner: null,
+            size: packageExists?.size
+        })
+
+        if (validBins.length < packageExists?.binNum) {
+            return next(createError(401, "There are not enough available bins."))
+        }
+
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id,
-            { package: packageId }, { new: true })
+            { package: packageId }, { new: true }).populate("package bins")
 
         req.user = {
             isSuspended: updatedUser?.isSuspended,
@@ -483,3 +491,4 @@ export async function updateHomeownerPackage(req: Request<{}, {}, { packageId: s
         next(error)
     }
 }
+

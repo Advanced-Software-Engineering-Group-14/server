@@ -1,4 +1,5 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { IssueRes } from "../types";
 
 const IssueSchema = new Schema({
     title: {
@@ -17,4 +18,4 @@ const IssueSchema = new Schema({
 }, { timestamps: true })
 
 
-export const IssueModel = model<any>("Issue", IssueSchema);
+export const IssueModel = model<IssueRes>("Issue", IssueSchema);

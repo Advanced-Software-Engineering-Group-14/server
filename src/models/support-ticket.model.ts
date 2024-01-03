@@ -1,4 +1,5 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { SupportTicketRes } from "../types";
 
 const SupportTicketSchema = new Schema({
     title: {
@@ -22,4 +23,4 @@ const SupportTicketSchema = new Schema({
 }, { timestamps: true })
 
 
-export const SupportTicketModel = model<any>("SupportTicket", SupportTicketSchema);
+export const SupportTicketModel = model<SupportTicketRes>("SupportTicket", SupportTicketSchema);

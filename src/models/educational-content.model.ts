@@ -1,4 +1,5 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { EducationalContentRes } from "../types";
 
 const EducationalContentSchema = new Schema({
     title: {
@@ -21,4 +22,4 @@ const EducationalContentSchema = new Schema({
 }, { timestamps: true })
 
 
-export const EducationalContentModel = model<any>("EducationalContent", EducationalContentSchema);
+export const EducationalContentModel = model<EducationalContentRes>("EducationalContent", EducationalContentSchema);

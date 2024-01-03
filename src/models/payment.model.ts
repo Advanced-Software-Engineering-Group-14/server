@@ -1,4 +1,5 @@
 import { Schema, model, SchemaTypes } from "mongoose";
+import { PaymentRes } from "../types";
 
 const PaymentSchema = new Schema({
     paymentType: {
@@ -20,17 +21,10 @@ const PaymentSchema = new Schema({
         type: SchemaTypes.ObjectId,
         ref: "Homeowner",
     },
-    pickup: {
-        type: SchemaTypes.ObjectId,
-        ref: "Pickup",
-    },
-    binPackage: {
-        type: SchemaTypes.ObjectId,
-        ref: "BinPackage",
-    },
     refNumber: {
         type: SchemaTypes.String,
-        required: true
+        required: true,
+        unique: true
     },
     totalNumber: {
         type: SchemaTypes.Number,
@@ -39,4 +33,4 @@ const PaymentSchema = new Schema({
 }, { timestamps: true })
 
 
-export const PaymentModel = model<any>("Payment", PaymentSchema);
+export const PaymentModel = model<PaymentRes>("Payment", PaymentSchema);

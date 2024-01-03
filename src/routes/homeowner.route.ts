@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { VerifyAccess, VerifyManager, VerifySudo } from '../middlewares';
-import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail, updateHomeownerPassword } from '../controllers/homeowner.controller';
+import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail, updateHomeownerPassword, chooseBinPackage } from '../controllers/homeowner.controller';
 
 const router = Router();
 

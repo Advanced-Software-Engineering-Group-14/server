@@ -97,16 +97,19 @@ export type Homeowner = {
 export type BinPackage = {
     name: string
     price: number
+    size: "sm" | "md" | "lg"
     binNum: number
     isCustom: boolean
 }
 
-
+export type BinPackagePayment = {
+    package: BinPackage
+    homeowner: Homeowner
+    payment: Payment
+}
 
 export type Payment = {
     paymentType: "pickup" | "bin"
-    pickup?: Pickup
-    binPackage?: BinPackage
     paymentMethod: "card" | "mobile_money" | "bank"
     response: "success" | "failure"
     totalAmount: number
@@ -118,14 +121,18 @@ export type Bin = {
     category: "recycling" | "trash"
     status: "full" | "empty"
     price: number
+    isCustom: boolean
+    size: "sm" | "md" | "lg"
+    homeowner: Homeowner
 }
 
 export type Pickup = {
     date: Date
-    status: "pending" | "assigned" | "ongoing" | "completed" | "cancelled"
+    status: PickupStatus
     bins: Bin[]
     homeowner: Homeowner
     driver: Driver
+    payment: Payment
 }
 
 export type EducationalContent = {
@@ -137,7 +144,7 @@ export type EducationalContent = {
 
 export type SupportTicket = {
     homeowner: Homeowner
-    status: "pending" | "ongoing" | "resolved" | "cancelled"
+    status: SupportTicketStatus
     title: string
     description: string
 }
@@ -149,3 +156,32 @@ export type Issue = {
     driver: Driver
 }
 
+export type BinRequest = {
+    binNum: number
+    homeowner: Homeowner
+    driver: Driver
+    status: BinRequestStatus
+    payment: Payment
+}
+
+export type PickupSettings = {
+    dailyPickupLimitPerDriver: number
+}
+
+export type PickupStatus = "pending" | "assigned" | "ongoing" | "completed" | "cancelled"
+export type BinRequestStatus = "pending" | "processing" | "accepted" | "delivered" | "cancelled"
+export type SupportTicketStatus = "pending" | "ongoing" | "resolved" | "cancelled"
+
+export type ManagerRes = Manager & MongoResponse
+export type DriverRes = Driver & MongoResponse
+export type HomeownerRes = Homeowner & MongoResponse
+export type BinRes = Bin & MongoResponse
+export type BinPackageRes = BinPackage & MongoResponse
+export type BinPackagePaymentRes = BinPackagePayment & MongoResponse
+export type BinRequestRes = BinRequest & MongoResponse
+export type PaymentRes = Payment & MongoResponse
+export type PickupRes = Pickup & MongoResponse
+export type EducationalContentRes = EducationalContent & MongoResponse
+export type SupportTicketRes = SupportTicket & MongoResponse
+export type IssueRes = Issue & MongoResponse
+export type PickupSettingsRes = PickupSettings & MongoResponse
