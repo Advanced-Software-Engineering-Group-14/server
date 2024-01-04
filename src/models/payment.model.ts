@@ -26,7 +26,7 @@ const PaymentSchema = new Schema({
         required: true,
         unique: true
     },
-    totalNumber: {
+    totalAmount: {
         type: SchemaTypes.Number,
         required: true
     },

@@ -143,6 +143,22 @@ export async function getBins(req: Request<{}, {}, {}>, res: Response, next: Nex
     }
 }
 
+export async function getCurrentUserBins(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
+    const { user: _user } = req
+    try {
+        const newData = await BinModel.find({homeowner: _user?.id})
+
+        res.status(200).json({
+            success: true,
+            data: newData,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+
 export async function getBinsByHomeowner(req: Request<{ homeowner: string }, {}, {}>, res: Response, next: NextFunction) {
     const { homeowner } = req.params
     try {
@@ -200,5 +216,13 @@ export async function getAssignedBins(req: Request<{}, {}, {}>, res: Response, n
     }
 }
 
+
+// make all bins full
+
+// make all bins empty
+
+// make single bin full
+
+// make single bin empty
 
 

@@ -168,8 +168,8 @@ export type PickupSettings = {
     dailyPickupLimitPerDriver: number
 }
 
-export type PickupStatus = "pending" | "assigned" | "ongoing" | "completed" | "cancelled"
-export type BinRequestStatus = "pending" | "processing" | "accepted" | "delivered" | "cancelled"
+export type PickupStatus = "pending" | "assigned" | "ongoing" | "completed" | "cancelled" | "paid"
+export type BinRequestStatus = "pending" | "processing" | "accepted" | "delivered" | "cancelled" | "paid"
 export type SupportTicketStatus = "pending" | "ongoing" | "resolved" | "cancelled"
 
 export type ManagerRes = Manager & MongoResponse

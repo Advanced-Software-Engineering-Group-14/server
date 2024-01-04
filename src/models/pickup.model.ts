@@ -4,8 +4,9 @@ import { PickupRes } from "../types";
 const PickupSchema = new Schema({
     status: {
         type: SchemaTypes.String,
-        enum: ["pending", "assigned" , "ongoing" , "cancelled", "completed"],
-        required: true
+        enum: ["pending", "assigned" , "ongoing" , "cancelled", "completed", "paid"],
+        required: true,
+        default: "pending"
     },
     homeowner: {
         type: SchemaTypes.ObjectId,
@@ -15,7 +16,14 @@ const PickupSchema = new Schema({
     driver: {
         type: SchemaTypes.ObjectId,
         ref: "Driver",
-        required: true
+        required: true,
+        default: null
+    },
+    payment: {
+        type: SchemaTypes.ObjectId,
+        ref: "Payment",
+        required: true,
+        default: null
     },
     bins: [{
         type: SchemaTypes.ObjectId,

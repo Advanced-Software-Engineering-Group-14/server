@@ -13,6 +13,7 @@ router.post("/change-password", VerifyAccess, updateHomeownerPassword)
 router.get("/", VerifyAccess, VerifyManager, getAllHomeowners)
 router.get("/:id", VerifyAccess, getHomeownerById)
 
+router.patch("/choose-package/", VerifyAccess, chooseBinPackage)
 router.patch("/suspend/:id", VerifyAccess, VerifyManager, suspendHomeowner)
 router.patch("/unsuspend/:id", VerifyAccess, VerifyManager, unsuspendHomeowner)
 router.patch("/approve/:id", VerifyAccess, VerifyManager, approveHomeowner)

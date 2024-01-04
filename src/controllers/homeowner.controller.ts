@@ -472,7 +472,9 @@ export async function chooseBinPackage(req: Request<{}, {}, { packageId: string 
         }
 
         const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id,
-            { package: packageId }, { new: true }).populate("package bins")
+            {
+                package: packageId
+            }, { new: true }).populate("package bins")
 
         req.user = {
             isSuspended: updatedUser?.isSuspended,

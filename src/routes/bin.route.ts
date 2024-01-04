@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { VerifyAccess, VerifyManager, VerifySudo } from '../middlewares';
-import { createSingleBin, createMultipleBins, deleteBin, getSingleBin, getBins, getAssignedBins, getBinsByHomeowner, getUnassignedBins } from '../controllers/bin.controller';
+import { createSingleBin, createMultipleBins, deleteBin, getSingleBin, getBins, getAssignedBins, getBinsByHomeowner, getUnassignedBins, getCurrentUserBins} from '../controllers/bin.controller';
 
 const router = Router();
 
@@ -9,6 +9,7 @@ router.post("/",  createSingleBin)
 router.post("/multiple", createMultipleBins)
 
 router.get("/", getBins)
+router.get("/user", VerifyAccess, getCurrentUserBins)
 router.get("/assigned", getAssignedBins)
 router.get("/unassigned", getUnassignedBins)
 router.get("/homeowner/:homeowner", getBinsByHomeowner)
