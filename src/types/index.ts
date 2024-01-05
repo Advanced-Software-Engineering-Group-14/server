@@ -166,6 +166,7 @@ export type BinRequest = {
 
 export type PickupSettings = {
     dailyPickupLimitPerDriver: number
+    pickupPrice: number
 }
 
 export type PickupStatus = "pending" | "assigned" | "ongoing" | "completed" | "cancelled" | "paid"

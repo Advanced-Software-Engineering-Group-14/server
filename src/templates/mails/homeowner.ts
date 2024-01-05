@@ -31,5 +31,9 @@ export default {
         subject: lodash.template("Account Rejected"),
         message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nYour account has been unfortunately rejected. Reasons for this could be that the Wastify Team suspects that you may be a fraudulent account or spam account. \n\nIf this is a mistake, reach out to the managers.")
     },
+    PaymentReceipt: {
+        subject: lodash.template("Payment Receipt from Wastify"),
+        message: lodash.template("Dear ${user.othernames} ${user.surname},\n\nFind below the details of your most recent payment. \n\nPayment Method: ${payment.paymentMethod}\nPayment Type: ${payment.paymentType}  \nReference Type: ${payment.refNumber}  \nPayment Status: ${payment.response} \nTotal Amount: ${payment.totalAmount}")
+    }
 
 }

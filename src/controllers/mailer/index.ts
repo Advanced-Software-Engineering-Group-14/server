@@ -2,13 +2,15 @@
 
 import { __sendMail } from "./../../utils/mail"
 import { mails as __templates } from "./../../templates"
+import { Payment, PaymentRes } from "../../types";
 
-type EmailTemplates = "ManagerCreated" | "ManagerVerificationCode" | "ManagerLoggedIn" | "ManagerAccountSuspended" | "ManagerAccountUnSuspended" | "DriverCreated" | "DriverVerificationCode" | "DriverLoggedIn" | "DriverAccountSuspended" | "DriverAccountUnSuspended" | "HomeownerCreated" | "HomeownerVerificationCode" | "HomeownerLoggedIn" | "HomeownerAccountSuspended" | "HomeownerAccountUnSuspended"| "HomeownerApproved" | "HomeownerRejected"
+type EmailTemplates = "ManagerCreated" | "ManagerVerificationCode" | "ManagerLoggedIn" | "ManagerAccountSuspended" | "ManagerAccountUnSuspended" | "DriverCreated" | "DriverVerificationCode" | "DriverLoggedIn" | "DriverAccountSuspended" | "DriverAccountUnSuspended" | "HomeownerCreated" | "HomeownerVerificationCode" | "HomeownerLoggedIn" | "HomeownerAccountSuspended" | "HomeownerAccountUnSuspended"| "HomeownerApproved" | "HomeownerRejected" | "PaymentReceipt"
 
 type EmailData = {
     user?: any
     code?: string
     password?: string
+    payment?: PaymentRes
 }
 
 type SendEmailArgs = {

@@ -7,6 +7,10 @@ const PickupSettingsSchema = new Schema({
         required: true,
         default: 10
     },
+    pickupPrice: {
+        type: SchemaTypes.Number,
+        required:true
+    }
 }, { timestamps: true })
 
 

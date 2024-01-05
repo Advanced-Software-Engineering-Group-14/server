@@ -16,13 +16,11 @@ const PickupSchema = new Schema({
     driver: {
         type: SchemaTypes.ObjectId,
         ref: "Driver",
-        required: true,
         default: null
     },
     payment: {
         type: SchemaTypes.ObjectId,
         ref: "Payment",
-        required: true,
         default: null
     },
     bins: [{
