@@ -14,6 +14,8 @@ type CreateManagerInput = {
     role: "ADMIN" | "SUDO"
 }
 
+type UpdateUserDetailsInput = Pick<CreateManagerInput, "surname" | "othernames" | "phone">
+
 export async function createManager(req: Request<{}, {}, CreateManagerInput>, res: Response, next: NextFunction) {
     const { email, othernames, phone, role, surname } = req.body
 
@@ -61,6 +63,45 @@ export async function createManager(req: Request<{}, {}, CreateManagerInput>, re
 
         next();
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function updateManager(req: Request<{ }, {}, UpdateUserDetailsInput>, res: Response, next: NextFunction) {
+    const { user: _user } = req
+    const { surname, othernames, phone } = req.body
+    try {
+      
+
+        if (!surname || !othernames || !phone) {
+            return next(createError(400, 'Provide all required fields'));
+            
+        }
+
+        const userExists = await ManagerModel.findById(_user?.id)
+
+        if (!userExists) {
+            return next(createError(404, "User not found"))
+        }
+
+        if (userExists?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        const updatedUser = await ManagerModel.findByIdAndUpdate(userExists?._id, {
+            surname,
+            othernames,
+            phone,
+        }, {
+            new: true
+        })
+
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            data: updatedUser,
+        });
     } catch (error) {
         next(error)
     }

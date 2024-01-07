@@ -88,7 +88,7 @@ export async function deleteBin(req: Request<{ id: string }, {}, {}>, res: Respo
         }
 
 
-        const newData = await BinModel.findByIdAndDelete(binExists)
+        const newData = await BinModel.findByIdAndDelete(binExists).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -112,7 +112,7 @@ export async function getSingleBin(req: Request<{ id: string }, {}, {}>, res: Re
             return next(createError(400, 'Enter a valid object id'));
         }
 
-        const binExists = await BinModel.findById(id)
+        const binExists = await BinModel.findById(id).populate("homeowner")
 
         if (!binExists) {
             return next(createError(404, "Bin does not exist"))
@@ -131,7 +131,7 @@ export async function getSingleBin(req: Request<{ id: string }, {}, {}>, res: Re
 export async function getBins(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
 
     try {
-        const newData = await BinModel.find()
+        const newData = await BinModel.find().populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -146,7 +146,7 @@ export async function getBins(req: Request<{}, {}, {}>, res: Response, next: Nex
 export async function getCurrentUserBins(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
     const { user: _user } = req
     try {
-        const newData = await BinModel.find({ homeowner: _user?.id })
+        const newData = await BinModel.find({ homeowner: _user?.id }).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -176,7 +176,7 @@ export async function getBinsByHomeowner(req: Request<{ homeowner: string }, {},
             return next(createError(404, "Homeowner does not exist"))
         }
 
-        const newData = await BinModel.find({ homeowner })
+        const newData = await BinModel.find({ homeowner }).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -204,7 +204,7 @@ export async function getUnassignedBins(req: Request<{}, {}, {}>, res: Response,
 
 export async function getAssignedBins(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
     try {
-        const newData = await BinModel.find({ homeowner: { $ne: null } })
+        const newData = await BinModel.find({ homeowner: { $ne: null } }).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -254,7 +254,7 @@ export async function fillCurrentUserBins(req: Request<{}, {}, {}>, res: Respons
 
 
 
-        const newData = await BinModel.find({ homeowner:  _user.id })
+        const newData = await BinModel.find({ homeowner:  _user.id }).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -305,7 +305,7 @@ export async function emptyCurrentUserBins(req: Request<{}, {}, {}>, res: Respon
 
 
 
-        const newData = await BinModel.find({ homeowner: _user.id })
+        const newData = await BinModel.find({ homeowner: _user.id }).populate("homeowner")
 
         res.status(200).json({
             success: true,
@@ -363,7 +363,7 @@ export async function fillSingleBin(req: Request<{ id: string }, {}, {}>, res: R
 
         const newData = await BinModel.findByIdAndUpdate(id, {
             status: "full"
-        }, {new: true})
+        }, {new: true}).populate("homeowner")
 
 
         res.status(200).json({
@@ -423,7 +423,7 @@ export async function emptySingleBin(req: Request<{ id: string }, {}, {}>, res: 
 
         const newData = await BinModel.findByIdAndUpdate(id, {
             status: "empty"
-        }, {new: true})
+        }, {new: true}).populate("homeowner")
 
 
         res.status(200).json({

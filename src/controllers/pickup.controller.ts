@@ -120,7 +120,7 @@ export async function reschedulePickup(req: Request<{ id: string }, {}, CreatePi
         }
 
 
-        const newData = await PickupModel.findByIdAndUpdate(id, { date }, { new: true })
+        const newData = await PickupModel.findByIdAndUpdate(id, { date }, { new: true }).populate("homeowner payment driver bins")
 
         res.status(200).json({
             success: true,
@@ -162,7 +162,7 @@ export async function cancelPickup(req: Request<{ id: string }, {}, {}>, res: Re
         }
 
 
-        const newData = await PickupModel.findByIdAndUpdate(id, { status: "cancelled" }, { new: true })
+        const newData = await PickupModel.findByIdAndUpdate(id, { status: "cancelled" }, { new: true }).populate("homeowner payment driver bins")
 
         res.status(200).json({
             success: true,
@@ -224,7 +224,7 @@ export async function assignPickupsAuto(req: Request<{}, {}, {}>, res: Response,
             }
         }
 
-        const newData = await PickupModel.find()
+        const newData = await PickupModel.find().populate("homeowner payment driver bins")
 
         res.status(200).json({
             success: true,
@@ -256,7 +256,7 @@ export async function viewPickupsByDay(req: Request<{ date: string }, {}, {}>, r
         }
 
         // Find pickups for the formatted date
-        const pickups = await PickupModel.find({ date: formattedDate });
+        const pickups = await PickupModel.find({ date: formattedDate }).populate("homeowner payment driver bins");
 
         res.status(200).json({
             success: true,
@@ -273,12 +273,26 @@ export async function viewOverduePickups(req: Request<{}, {}, {}>, res: Response
         const overduePickups = await PickupModel.find({
             status: { $nin: ['cancelled', 'completed'] },
             date: { $lt: dayjs().format('YYYY-MM-DD') },
-        });
+        }).populate("homeowner payment driver bins");
 
         res.status(200).json({
             success: true,
             message: 'Pickup assignment successful!',
             data: overduePickups,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function viewPickups(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
+    try {
+        const pickups = await PickupModel.find().populate("homeowner payment driver bins");
+
+        res.status(200).json({
+            success: true,
+            message: 'Pickup assignment successful!',
+            data: pickups,
         });
     } catch (error) {
         next(error);

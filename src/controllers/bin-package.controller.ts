@@ -11,7 +11,7 @@ type CreateBinInput = Pick<BinPackage, "name" | "price" | "binNum"| "size">
 export async function createBinPackage(req: Request<{}, {}, CreateBinInput>, res: Response, next: NextFunction) {
     const { name, price, binNum, size } = req.body
     try {
-        if (!name || !price || !binNum) {
+        if (!name || !price || !binNum || !size) {
             return next(createError(400, 'Provide all required fields'));
         }
 
@@ -76,8 +76,14 @@ export async function deleteBin(req: Request<{ id: string }, {}, {}>, res: Respo
             return next(createError(404, "Bin package does not exist"))
         }
 
+        // find a user with that package
+        const userWithPackageExists = await HomeownerModel.findOne({ package: id })
+        
+        if (userWithPackageExists) {
+            return next(createError(403, "There are users on this package"))
+        }
 
-        const newData = await BinModel.findByIdAndDelete(binExists)
+        const newData = await BinPackageModel.findByIdAndDelete(binExists)
 
         res.status(200).json({
             success: true,
@@ -120,7 +126,7 @@ export async function getSinglePackage(req: Request<{ id: string }, {}, {}>, res
 export async function getPackages(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
 
     try {
-        const newData = await BinPackageModel.find()
+        const newData = await BinPackageModel.find({isCustom: false})
 
         res.status(200).json({
             success: true,
