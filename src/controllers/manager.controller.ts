@@ -61,7 +61,6 @@ export async function createManager(req: Request<{}, {}, CreateManagerInput>, re
             data: newUser,
         });
 
-        next();
 
     } catch (error) {
         next(error)
