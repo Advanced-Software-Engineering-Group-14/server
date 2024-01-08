@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import { VerifyAccess, VerifyManager, VerifySudo } from '../middlewares';
-import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail, updateHomeownerPassword, chooseBinPackage } from '../controllers/homeowner.controller';
+import { createHomeowner, deleteHomeowner, getAllHomeowners, getHomeownerById, suspendHomeowner, unsuspendHomeowner, approveHomeowner, rejectHomeowner, verifyHomeownerEmail, updateHomeownerPassword, chooseBinPackage, sendHomeownerCode } from '../controllers/homeowner.controller';
 
 const router = Router();
 
 // /homeowner
 
 router.post("/", createHomeowner)
-router.post("/verify", VerifyAccess, verifyHomeownerEmail)
+router.post("/verify",  verifyHomeownerEmail)
+router.post("/send-code", sendHomeownerCode)
 router.post("/change-password", VerifyAccess, updateHomeownerPassword)
 
 router.get("/", VerifyAccess, VerifyManager, getAllHomeowners)

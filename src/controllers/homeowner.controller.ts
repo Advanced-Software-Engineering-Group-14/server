@@ -48,6 +48,44 @@ export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>
 
         await newUser.save()
 
+        // generate and send code
+
+        const username = _.trim(email)
+
+        const existingUser = await HomeownerModel.findOne({
+            $or: [
+                { email: username },
+            ]
+        });
+
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        if (existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        const __code = __genCode()
+
+        existingUser.verification = {
+            code: __code,
+            expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
+        };
+
+        await existingUser.save();
+
+        await sendMail({
+            args: {
+                email: existingUser.email,
+                template: "HomeownerVerificationCode",
+                data: {
+                    code: __code,
+                    user: existingUser
+                }
+            }
+        })
+
         res.status(201).json({
             success: true,
             data: newUser,
@@ -494,3 +532,53 @@ export async function chooseBinPackage(req: Request<{}, {}, { packageId: string 
     }
 }
 
+export async function sendHomeownerCode(req: Request<{}, {}, {email: string}>, res: Response, next: NextFunction) {
+    const { email } = req.body
+    try {
+        const username = _.trim(email)
+
+        const existingUser = await HomeownerModel.findOne({
+            $or: [
+                { email: username },
+            ]
+        });
+
+        if (!existingUser) {
+            return next(createError(404, "Account not found"))
+        }
+
+        if (existingUser?.meta?.isSuspended) {
+            return next(createError(401, "Account has been suspended"))
+        }
+
+        const __code = __genCode()
+
+        existingUser.verification = {
+            code: __code,
+            expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
+        };
+
+        await existingUser.save();
+
+        await sendMail({
+            args: {
+                email: existingUser.email,
+                template: "HomeownerVerificationCode",
+                data: {
+                    code: __code,
+                    user: existingUser
+                }
+            }
+        })
+
+        res.status(200).json({
+            success: true,
+            message: 'Code sent!',
+            data: existingUser
+        })
+
+    } catch (error) {
+        next(error)
+    }
+
+}
