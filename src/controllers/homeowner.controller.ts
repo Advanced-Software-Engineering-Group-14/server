@@ -73,6 +73,13 @@ export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>
             expiresAt: dayjs().add(config.auth.code.expiry, "milliseconds").toDate()
         };
 
+
+        // generate a token after sign up
+        let __token = null;
+        __token = await existingUser.generateAuthToken()
+
+        existingUser.token = __token
+
         await existingUser.save();
 
         await sendMail({
