@@ -23,6 +23,12 @@ type CreateHomeownerInput = {
     password: string
 }
 
+type CompleteProfileInput = {
+    residence: string,
+    idType: string
+    idNo: string
+}
+
 export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>, res: Response, next: NextFunction) {
     const { email, othernames, phone, surname, gender, password } = req.body
 
@@ -96,6 +102,41 @@ export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>
         res.status(201).json({
             success: true,
             data: newUser,
+        });
+
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function completeHomeownerProfile(req: Request<{}, {}, CompleteProfileInput>, res: Response, next: NextFunction) {
+    const { residence, idType, idNo } = req.body
+    const { user: _user } = req
+    try {
+        if (!residence || !idType || !idNo) {
+            return next(createError(400, 'Provide all required fields'));
+        }
+
+        const userExists = await HomeownerModel.findById(_user?.id)
+
+        if (!userExists) {
+            return next(createError(404, 'User does not exist'));
+        }
+
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(userExists?._id, {
+            residence,
+            identification: {
+                idType,
+                no: idNo,
+            }
+        }, {new: true})
+
+
+
+        res.status(200).json({
+            success: true,
+            data: updatedUser,
         });
 
 
@@ -484,7 +525,7 @@ export async function updateHomeownerPassword(req: Request<{}, {}, ChangePasswor
 
 
 export async function chooseBinPackage(req: Request<{}, {}, { packageId: string }>, res: Response, next: NextFunction) {
-    const { packageId} = req.body
+    const { packageId } = req.body
     const { user: _user } = req
 
     try {
@@ -497,7 +538,7 @@ export async function chooseBinPackage(req: Request<{}, {}, { packageId: string 
         if (!packageExists) {
             return next(createError(404, "Package does not exist"))
         }
-        
+
         const existingUser = await HomeownerModel.findById(_user?.id)
         if (!existingUser) {
             return next(createError(404, "Account not found"))
@@ -539,7 +580,7 @@ export async function chooseBinPackage(req: Request<{}, {}, { packageId: string 
     }
 }
 
-export async function sendHomeownerCode(req: Request<{}, {}, {email: string}>, res: Response, next: NextFunction) {
+export async function sendHomeownerCode(req: Request<{}, {}, { email: string }>, res: Response, next: NextFunction) {
     const { email } = req.body
     try {
         const username = _.trim(email)
