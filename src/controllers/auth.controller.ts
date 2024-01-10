@@ -177,7 +177,7 @@ export async function loginHomeowner(req: Request<{}, {}, LoginUserInput>, res: 
 
         const __token = await existingUser.generateAuthToken()
 
-        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true })
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(existingUser?._id, { token: __token }, { new: true }).populate("package bins")
 
         await sendMail({
             args: {
