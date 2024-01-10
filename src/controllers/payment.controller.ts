@@ -13,6 +13,7 @@ type BinPayment = Payment & {
 export async function createPaymentForBinPackage(req: Request<{}, {}, BinPayment>, res: Response, next: NextFunction) {
     const { user: _user } = req
     const { paymentMethod, refNumber, response, totalAmount, binPackage } = req.body
+    
     try {
         if (!paymentMethod || !refNumber || !response || !totalAmount || !binPackage) {
             return next(createError(400, "Provide all required fields"))
@@ -66,7 +67,7 @@ export async function createPaymentForBinPackage(req: Request<{}, {}, BinPayment
             const updatedUser = await HomeownerModel.findByIdAndUpdate(_user?.id, {
                 bins: getUserBins,
                 package: binPackage
-            })
+            }, {new:true})
 
             console.log(updatedUser)
         }
@@ -83,7 +84,7 @@ export async function createPaymentForBinPackage(req: Request<{}, {}, BinPayment
         // create bin package model
         await BinPackagePaymentModel.create({
             homeowner: existingUser?._id,
-            package: existingUser?.package?._id,
+            package: packageExists?._id,
             payment: newData?._id
         })
 
