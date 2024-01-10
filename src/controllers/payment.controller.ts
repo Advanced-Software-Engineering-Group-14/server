@@ -6,12 +6,15 @@ import { Bin, BinPackage, Payment } from "../types";
 import { __validObjectId } from "../helpers/object-id";
 import { sendMail } from "./mailer";
 
+type BinPayment = Payment & {
+    binPackage: string
+}
 
-export async function createPaymentForBinPackage(req: Request<{}, {}, Payment>, res: Response, next: NextFunction) {
+export async function createPaymentForBinPackage(req: Request<{}, {}, BinPayment>, res: Response, next: NextFunction) {
     const { user: _user } = req
-    const { paymentMethod, refNumber, response, totalAmount } = req.body
+    const { paymentMethod, refNumber, response, totalAmount, binPackage } = req.body
     try {
-        if (!paymentMethod || !refNumber || !response || !totalAmount) {
+        if (!paymentMethod || !refNumber || !response || !totalAmount || !binPackage) {
             return next(createError(400, "Provide all required fields"))
         }
 
@@ -25,11 +28,8 @@ export async function createPaymentForBinPackage(req: Request<{}, {}, Payment>, 
             return next(createError(401, "Account has been suspended"))
         }
 
-        if (!existingUser?.package || !existingUser?.package?._id) {
-            return next(createError(400, "This user has not chosen a package for payment"))
-        }
 
-        const packageExists = await BinPackageModel.findById(existingUser?.package?._id)
+        const packageExists = await BinPackageModel.findById(binPackage)
 
         if (!packageExists) {
             return next(createError(404, "Package does not exist"))
@@ -40,6 +40,7 @@ export async function createPaymentForBinPackage(req: Request<{}, {}, Payment>, 
 
         // if response is success, then check details of package and assign bins to user
         if (_.isEqual(response, "success")) {
+            
             const validBins = await BinModel.find({
                 homeowner: null,
                 size: packageExists?.size
@@ -62,7 +63,10 @@ export async function createPaymentForBinPackage(req: Request<{}, {}, Payment>, 
             const getUserBins = await BinModel.find({ homeowner: existingUser?._id })
 
             // update user with bins
-            const updatedUser = await HomeownerModel.findByIdAndUpdate(_user?.id, { bins: getUserBins })
+            const updatedUser = await HomeownerModel.findByIdAndUpdate(_user?.id, {
+                bins: getUserBins,
+                package: binPackage
+            })
 
             console.log(updatedUser)
         }
