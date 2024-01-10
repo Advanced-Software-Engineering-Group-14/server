@@ -110,7 +110,7 @@ export type BinPackagePayment = {
 
 export type Payment = {
     paymentType: "pickup" | "bin"
-    paymentMethod: "card" | "mobile_money" | "bank"
+    paymentMethod: "card" | "mobile_money" | "bank" 
     response: "success" | "failure"
     totalAmount: number
     refNumber: string
