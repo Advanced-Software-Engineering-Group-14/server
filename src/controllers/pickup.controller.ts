@@ -298,3 +298,23 @@ export async function viewPickups(req: Request<{}, {}, {}>, res: Response, next:
         next(error);
     }
 }
+
+export async function viewUserPickups(req: Request<{}, {}, {}>, res: Response, next: NextFunction) {
+    const {user: _user} = req
+    try {
+        const userExists = HomeownerModel.findById(_user.id)
+
+        if (!userExists) {
+            return next(createError(404, 'User does not exist.'));
+        }
+        const pickups = await PickupModel.find({homeowner: _user.id}).populate("homeowner payment driver bins");
+
+        res.status(200).json({
+            success: true,
+            message: 'Pickup assignment successful!',
+            data: pickups,
+        });
+    } catch (error) {
+        next(error);
+    }
+}
