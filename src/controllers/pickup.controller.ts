@@ -43,6 +43,10 @@ export async function createPickup(req: Request<{}, {}, CreatePickupInput>, res:
             status: "full"
         })
 
+        if (!bins) {
+            return next(createError(400, "There are no full bins"))
+        }
+
         // Check if the date is a weekend (Saturday or Sunday)
         const isWeekendDate = dayjs(date).day() === 0 || dayjs(date).day() === 6;
 
@@ -307,7 +311,7 @@ export async function viewUserPickups(req: Request<{}, {}, {}>, res: Response, n
         if (!userExists) {
             return next(createError(404, 'User does not exist.'));
         }
-        const pickups = await PickupModel.find({homeowner: _user.id}).populate("homeowner payment driver bins");
+        const pickups = await PickupModel.find({homeowner: _user.id}, ).populate("homeowner payment driver bins");
 
         res.status(200).json({
             success: true,
