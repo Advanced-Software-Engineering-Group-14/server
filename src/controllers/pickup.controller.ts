@@ -42,8 +42,8 @@ export async function createPickup(req: Request<{}, {}, CreatePickupInput>, res:
             homeowner: _user?.id,
             status: "full"
         })
-
-        if (!bins) {
+        console.log(bins)
+        if (!bins || bins?.length === 0) {
             return next(createError(400, "There are no full bins"))
         }
 
