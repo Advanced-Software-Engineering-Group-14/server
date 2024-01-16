@@ -29,6 +29,16 @@ type CompleteProfileInput = {
     idNo: string
 }
 
+type ManageHomeownerDetailsInput = {
+    surname: string
+    othernames: string
+    phone: string
+    gender: "MALE" | "FEMALE"
+    residence: string,
+    idType: string
+    idNo: string
+}
+
 export async function createHomeowner(req: Request<{}, {}, CreateHomeownerInput>, res: Response, next: NextFunction) {
     const { email, othernames, phone, surname, gender, password } = req.body
 
@@ -130,7 +140,7 @@ export async function completeHomeownerProfile(req: Request<{}, {}, CompleteProf
                 idType,
                 no: idNo,
             }
-        }, {new: true})
+        }, { new: true })
 
 
 
@@ -629,4 +639,40 @@ export async function sendHomeownerCode(req: Request<{}, {}, { email: string }>,
         next(error)
     }
 
+}
+
+export async function manageHomeownerDetails(req: Request<{}, {}, ManageHomeownerDetailsInput>, res: Response, next: NextFunction) {
+    const { gender, idNo, idType, othernames, phone, residence, surname } = req.body
+    const { user: _user } = req
+    try {
+        if (!gender || !idNo || !idType || !othernames || !phone || !residence || !surname) {
+            return next(createError(400, "Provide all required fields"))
+        }
+
+        const userExists = await HomeownerModel.findById(_user?.id)
+        if (!userExists) {
+            return next(createError(404, "Account/User not found"))
+        }
+
+        const updatedUser = await HomeownerModel.findByIdAndUpdate(_user?.id, {
+            surname,
+            othernames,
+            gender,
+            phone,
+            residence,
+            identification: {
+                idType,
+                no: idNo
+            }
+        }, { new: true })
+
+        res.status(200).json({
+            success: true,
+            message: 'User updated!',
+            data: updatedUser
+        })
+
+    } catch (error) {
+        next(error)
+    }
 }
