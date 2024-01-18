@@ -322,3 +322,71 @@ export async function viewUserPickups(req: Request<{}, {}, {}>, res: Response, n
         next(error);
     }
 }
+
+export async function changePickupToOngoing(req: Request<{ id: string }, {}, {}>, res: Response, next: NextFunction) {
+    const { user: _user } = req
+    const { id } = req.params
+
+    try {
+        if (!id) {
+            return next(createError(400, "Provide all required fields"))
+        }
+
+
+        const pickupExists = await PickupModel.findById(id)
+
+        if (!pickupExists) {
+            return next(createError(404, "Pickup not found"))
+        }
+
+        if (pickupExists.status !== "assigned") {
+            return next(createError(401, "This pickup is not eligible to be moved to ongoing"))
+        }
+
+
+        const newData = await PickupModel.findByIdAndUpdate(id, { status: "ongoing" }, { new: true }).populate("homeowner payment driver bins")
+
+        res.status(200).json({
+            success: true,
+            message: 'Pickup status change successful!',
+            data: newData,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
+
+export async function changePickupToCompleted(req: Request<{ id: string }, {}, {}>, res: Response, next: NextFunction) {
+    const { user: _user } = req
+    const { id } = req.params
+
+    try {
+        if (!id) {
+            return next(createError(400, "Provide all required fields"))
+        }
+
+       
+        const pickupExists = await PickupModel.findById(id)
+
+        if (!pickupExists) {
+            return next(createError(404, "Pickup not found"))
+        }
+
+        if (pickupExists.status !== "assigned") {
+            return next(createError(401, "This pickup is not eligible to be moved to ongoing"))
+        }
+
+
+        const newData = await PickupModel.findByIdAndUpdate(id, { status: "ongoing" }, { new: true }).populate("homeowner payment driver bins")
+
+        res.status(200).json({
+            success: true,
+            message: 'Pickup status change successful!',
+            data: newData,
+        });
+
+    } catch (error) {
+        next(error)
+    }
+}
